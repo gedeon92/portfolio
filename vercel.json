@@ -8,7 +8,7 @@
   ],
   "headers": [
     {
-      "source": "/(.*\\.(png|jpg|jpeg|gif|ico|svg))",
+      "source": "/(.*\\\\.(png|jpg|jpeg|gif|ico|svg))",
       "headers": [
         {
           "key": "Cache-Control",
