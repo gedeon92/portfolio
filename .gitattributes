@@ -1,2 +1,2 @@
-video/*.mp4 filter=lfs diff=lfs merge=lfs -text
-video/EduVote[[:space:]]-aplication[[:space:]]de[[:space:]]vot.mp4 filter=lfs diff=lfs merge=lfs -text
+# Git attributes for portfolio project
+# All files are now regular files (no LFS)

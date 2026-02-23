@@ -195,12 +195,44 @@
                 </p>
             </div>
             
-            <div class="video-container">
-                <div class="video-wrapper">
-                    <video controls poster="images/vote-poster.jpg">
-                        <source src="video/EduVote -aplication de vot.mp4" type="video/mp4">
-                        Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
+            <div class="images-carousel">
+                <div class="carousel-container">
+                    <div class="carousel-slide active">
+                        <img src="eduVote/EduVote - Connexion.png" alt="EduVote Connexion">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="eduVote/EduVote_MENU.png" alt="EduVote Menu">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="eduVote/EduVote - Dashboard.png" alt="EduVote Dashboard">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="eduVote/EduVote - Liste des Étudiants — Mozilla Firefox 23_02_2026 12_09_49.png" alt="EduVote Liste Étudiants 1">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="eduVote/EduVote - Liste des Étudiants — Mozilla Firefox 23_02_2026 12_13_52.png" alt="EduVote Liste Étudiants 2">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="eduVote/EduVote - parametre.png" alt="EduVote Paramètres">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="eduVote/EduVote -resulta.png" alt="EduVote Résultats">
+                    </div>
+                    <button class="carousel-prev" onclick="changeSlide(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-next" onclick="changeSlide(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-indicators">
+                        <span class="indicator active" onclick="goToSlide(0)"></span>
+                        <span class="indicator" onclick="goToSlide(1)"></span>
+                        <span class="indicator" onclick="goToSlide(2)"></span>
+                        <span class="indicator" onclick="goToSlide(3)"></span>
+                        <span class="indicator" onclick="goToSlide(4)"></span>
+                        <span class="indicator" onclick="goToSlide(5)"></span>
+                        <span class="indicator" onclick="goToSlide(6)"></span>
+                    </div>
                 </div>
             </div>
             

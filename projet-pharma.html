@@ -195,12 +195,52 @@
                 </p>
             </div>
             
-            <div class="video-container">
-                <div class="video-wrapper">
-                    <video controls poster="images/pharma-poster.jpg">
-                        <source src="video/Jant-Pharma — gestion pharmacietique.mp4" type="video/mp4">
-                        Votre navigateur ne supporte pas la lecture de vidéos.
-                    </video>
+            <div class="images-carousel">
+                <div class="carousel-container">
+                    <div class="carousel-slide active">
+                        <img src="Pharma/connexion.png" alt="Pharma Connexion">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/dashboard.png" alt="Pharma Dashboard">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/produit.png" alt="Pharma Produits">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/inventaire.png" alt="Pharma Inventaire">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/vente.png" alt="Pharma Ventes">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/achat.png" alt="Pharma Achats">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/detailIn.png" alt="Pharma Details">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/utilisateur.png" alt="Pharma Utilisateurs">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="Pharma/privilege.png" alt="Pharma Privileges">
+                    </div>
+                    <button class="carousel-prev" onclick="changeSlide(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-next" onclick="changeSlide(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="carousel-indicators">
+                        <span class="indicator active" onclick="goToSlide(0)"></span>
+                        <span class="indicator" onclick="goToSlide(1)"></span>
+                        <span class="indicator" onclick="goToSlide(2)"></span>
+                        <span class="indicator" onclick="goToSlide(3)"></span>
+                        <span class="indicator" onclick="goToSlide(4)"></span>
+                        <span class="indicator" onclick="goToSlide(5)"></span>
+                        <span class="indicator" onclick="goToSlide(6)"></span>
+                        <span class="indicator" onclick="goToSlide(7)"></span>
+                        <span class="indicator" onclick="goToSlide(8)"></span>
+                    </div>
                 </div>
             </div>
             

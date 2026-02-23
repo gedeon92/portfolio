@@ -857,3 +857,184 @@ function initPreloader() {
 console.log('%c👋 Bonjour !', 'font-size: 24px; font-weight: bold; color: #6366f1;');
 console.log('%cVous regardez le portfolio de Gedeon Baroki', 'font-size: 14px; color: #94a3b8;');
 console.log('%cN\'hésitez pas à me contacter !', 'font-size: 14px; color: #06b6d4;');
+
+// ============================================
+// IMAGE CAROUSEL FUNCTIONALITY
+// ============================================
+
+let currentSlide = 0;
+let slideInterval;
+
+// Initialize all carousels on the page
+function initCarousels() {
+    const carousels = document.querySelectorAll('.carousel-container');
+    
+    carousels.forEach((carousel, index) => {
+        // Create unique namespace for each carousel
+        const carouselId = `carousel-${index}`;
+        carousel.setAttribute('data-carousel-id', carouselId);
+        
+        // Initialize first slide as active
+        const slides = carousel.querySelectorAll('.carousel-slide');
+        const indicators = carousel.querySelectorAll('.indicator');
+        
+        if (slides.length > 0) {
+            slides[0].classList.add('active');
+            if (indicators.length > 0) {
+                indicators[0].classList.add('active');
+            }
+        }
+        
+        // Add click handlers for indicators
+        indicators.forEach((indicator, i) => {
+            indicator.addEventListener('click', () => {
+                goToSlide(i, carouselId);
+            });
+        });
+        
+        // Add navigation buttons
+        const prevBtn = carousel.querySelector('.carousel-prev');
+        const nextBtn = carousel.querySelector('.carousel-next');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                changeSlide(-1, carouselId);
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                changeSlide(1, carouselId);
+            });
+        }
+        
+        // Start auto-play
+        startAutoPlay(carouselId);
+        
+        // Pause on hover
+        carousel.addEventListener('mouseenter', () => {
+            stopAutoPlay(carouselId);
+        });
+        
+        carousel.addEventListener('mouseleave', () => {
+            startAutoPlay(carouselId);
+        });
+        
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        carousel.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        carousel.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe(carouselId);
+        });
+        
+        function handleSwipe(carouselId) {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    changeSlide(1, carouselId); // Swipe left - next slide
+                } else {
+                    changeSlide(-1, carouselId); // Swipe right - previous slide
+                }
+            }
+        }
+    });
+}
+
+// Change slide function
+function changeSlide(direction, carouselId = null) {
+    const carousel = carouselId ? 
+        document.querySelector(`[data-carousel-id="${carouselId}"]`) : 
+        document.querySelector('.carousel-container');
+    
+    if (!carousel) return;
+    
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const indicators = carousel.querySelectorAll('.indicator');
+    
+    if (slides.length === 0) return;
+    
+    // Remove active class from current slide
+    slides[currentSlide].classList.remove('active');
+    if (indicators[currentSlide]) {
+        indicators[currentSlide].classList.remove('active');
+    }
+    
+    // Calculate new slide index
+    currentSlide = (currentSlide + direction + slides.length) % slides.length;
+    
+    // Add active class to new slide
+    slides[currentSlide].classList.add('active');
+    if (indicators[currentSlide]) {
+        indicators[currentSlide].classList.add('active');
+    }
+}
+
+// Go to specific slide
+function goToSlide(slideIndex, carouselId = null) {
+    const carousel = carouselId ? 
+        document.querySelector(`[data-carousel-id="${carouselId}"]`) : 
+        document.querySelector('.carousel-container');
+    
+    if (!carousel) return;
+    
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    const indicators = carousel.querySelectorAll('.indicator');
+    
+    if (slides.length === 0 || slideIndex >= slides.length) return;
+    
+    // Remove active class from current slide
+    slides[currentSlide].classList.remove('active');
+    if (indicators[currentSlide]) {
+        indicators[currentSlide].classList.remove('active');
+    }
+    
+    // Set new slide
+    currentSlide = slideIndex;
+    
+    // Add active class to new slide
+    slides[currentSlide].classList.add('active');
+    if (indicators[currentSlide]) {
+        indicators[currentSlide].classList.add('active');
+    }
+}
+
+// Auto-play functionality
+function startAutoPlay(carouselId = null) {
+    stopAutoPlay(carouselId); // Clear any existing interval
+    
+    slideInterval = setInterval(() => {
+        changeSlide(1, carouselId);
+    }, 4000); // Change slide every 4 seconds
+}
+
+function stopAutoPlay(carouselId = null) {
+    if (slideInterval) {
+        clearInterval(slideInterval);
+    }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+    } else if (e.key === 'ArrowRight') {
+        changeSlide(1);
+    }
+});
+
+// Initialize carousels when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initCarousels();
+});
+
+// Make functions globally accessible
+window.changeSlide = changeSlide;
+window.goToSlide = goToSlide;
