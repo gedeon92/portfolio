@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Application de Votes - Plateforme de vote électronique sécurisée par Gedeon Baroki">
+    <meta name="keywords" content="Vote, électronique, sécurité, Laravel, PHP, JavaScript">
+    <meta name="author" content="Gedeon Baroki">
+    <title>Application de Votes | Gedeon Baroki</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        .project-detail {
+            padding: 8rem 0 4rem;
+        }
+        
+        .project-hero {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .project-hero h1 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .project-hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        
+        .video-container {
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            background: var(--bg-secondary);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+        
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .project-info {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .info-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .tech-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            text-align: center;
+            transition: var(--transition-normal);
+        }
+        
+        .tech-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .tech-item i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tech-item span {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-normal);
+            margin-bottom: 2rem;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .project-detail {
+                padding: 6rem 0 2rem;
+            }
+            
+            .project-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .info-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-text">GB</span>
+            </a>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="index.html#home" class="nav-link">Accueil</a></li>
+                <li><a href="index.html#about" class="nav-link">À propos</a></li>
+                <li><a href="index.html#skills" class="nav-link">Compétences</a></li>
+                <li><a href="index.html#projects" class="nav-link">Projets</a></li>
+                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Project Detail Section -->
+    <section class="project-detail">
+        <div class="container">
+            <a href="index.html#projects" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Retour aux projets
+            </a>
+            
+            <div class="project-hero">
+                <h1>Application de Votes</h1>
+                <p>
+                    Plateforme de vote électronique sécurisée avec authentification, 
+                    cryptage des données et résultats en temps réel.
+                </p>
+            </div>
+            
+            <div class="video-container">
+                <div class="video-wrapper">
+                    <video controls poster="images/vote-poster.jpg">
+                        <source src="video/EduVote - Vote ecole.mp4" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                </div>
+            </div>
+            
+            <div class="project-info">
+                <div class="info-section">
+                    <h3><i class="fas fa-info-circle"></i> Description du projet</h3>
+                    <p>
+                        EduVote est une plateforme de vote électronique sécurisée conçue pour 
+                        garantir l'intégrité et la confidentialité des processus de vote. 
+                        Elle combine des technologies de pointe en matière de sécurité avec 
+                        une interface utilisateur intuitive pour faciliter la participation.
+                    </p>
+                    <br>
+                    <p>
+                        Le système assure l'authentification stricte des électeurs, le cryptage 
+                        des données sensibles et la transparence des résultats tout en maintenant 
+                        l'anonymat nécessaire au processus démocratique.
+                    </p>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-cogs"></i> Fonctionnalités principales</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Authentification multi-facteurs des électeurs
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Cryptage bout-en-bout des votes
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Résultats en temps réel avec tableaux de bord
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Gestion des élections et candidats
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Audit et traçabilité des opérations
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <i class="fas fa-check" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            Notifications et rapports détaillés
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3><i class="fas fa-tools"></i> Technologies utilisées</h3>
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <i class="fab fa-laravel"></i>
+                            <span>Laravel</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fab fa-php"></i>
+                            <span>PHP</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fab fa-js"></i>
+                            <span>JavaScript</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fas fa-database"></i>
+                            <span>MySQL</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fab fa-html5"></i>
+                            <span>HTML5</span>
+                        </div>
+                        <div class="tech-item">
+                            <i class="fab fa-css3-alt"></i>
+                            <span>CSS3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="footer-logo">GB</span>
+                    <p class="footer-tagline">DevArchitect & Data Strategist</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html#home">Accueil</a>
+                    <a href="index.html#about">À propos</a>
+                    <a href="index.html#skills">Compétences</a>
+                    <a href="index.html#projects">Projets</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+                <div class="footer-socials">
+                                        <a href="https://www.linkedin.com/in/gedeon-baroki-63a558345/" target="_blank" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="mailto:gedbaroki@gmail.com" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Gedeon Baroki. Tous droits réservés.</p>
+                <p class="footer-credit">Fait avec <i class="fas fa-heart"></i> et beaucoup de <i class="fas fa-coffee"></i></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
