@@ -710,7 +710,7 @@ function initCursorEffects() {
         position: fixed;
         width: 20px;
         height: 20px;
-        border: 2px solid #6366f1;
+        border: 1.5px solid rgba(255, 255, 255, 0.8);
         border-radius: 50%;
         pointer-events: none;
         z-index: 9998;
