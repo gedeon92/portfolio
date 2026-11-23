@@ -3818,3 +3818,83 @@ section,
         left: 30%;
     }
 }
+
+/* Globe décalé à droite de la photo : sa moitié droite (Afrique, Dakar) reste visible */
+.image-container .hero-earth {
+    width: 115%;
+    left: 45%;
+    top: -10%;
+}
+
+@media (max-width: 768px) {
+    .image-container .hero-earth {
+        width: 115%;
+        left: 45%;
+        top: -10%;
+    }
+}
+
+/* =====================================================================
+   COMPOSITION DE L'EN-TÊTE : globe entier en haut à droite,
+   photo plus petite en bas à gauche, devant le globe.
+   ===================================================================== */
+.image-container {
+    width: min(440px, 38vw);
+    height: min(440px, 38vw);
+}
+
+.image-container .hero-earth {
+    width: 92%;
+    left: 8%;
+    top: 0;
+}
+
+.image-container .image-frame {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 62%;
+    height: 62%;
+    z-index: 1;
+}
+
+.image-container .card-1 {
+    top: 33%;
+    left: 46%;
+    right: auto;
+    bottom: auto;
+}
+
+.image-container .card-2 {
+    top: auto;
+    bottom: 16%;
+    left: -12%;
+    right: auto;
+}
+
+.image-container .card-3 {
+    top: auto;
+    bottom: 2%;
+    left: 48%;
+    right: auto;
+}
+
+@media (max-width: 1024px) {
+    .image-container {
+        width: 360px;
+        height: 360px;
+    }
+}
+
+@media (max-width: 768px) {
+    .image-container {
+        width: min(340px, 86vw);
+        height: min(340px, 86vw);
+    }
+
+    .image-container .hero-earth {
+        width: 92%;
+        left: 8%;
+        top: 0;
+    }
+}

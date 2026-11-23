@@ -1,6 +1,5 @@
 /* =====================================================================
-   La Terre derrière la photo : globe en points lumineux, Dakar marqué,
-   arc animé Goma → Dakar.
+   La Terre derrière la photo : globe en points lumineux, Dakar marqué.
    ===================================================================== */
 (function () {
     'use strict';
@@ -17,15 +16,14 @@
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const RAD = Math.PI / 180;
     const DAKAR = { lat: 14.69, lon: -17.44, name: 'DAKAR' };
-    const GOMA = { lat: -1.68, lon: 29.22, name: 'GOMA' };
 
     // décalage du centre du globe par rapport à Dakar :
     // Dakar apparaît en haut à gauche du globe, au-dessus de la photo.
-    let OFFSET = { lon: 4, lat: -30 };
+    let OFFSET = { lon: 29, lat: -33 };
 
     let size = 0, DPR = 1, R = 0, C = 0;
     let visible = true;
-    let compact = false; // petit écran : étiquette au-dessus à droite
+    let compact = true;
 
     const lat = new Float32Array(PTS.length / 2);
     const lon = new Float32Array(PTS.length / 2);
@@ -41,9 +39,8 @@
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
         C = size / 2;
         R = C * 0.985;
-        compact = window.innerWidth <= 768;
-        // mobile : Dakar à droite de la photo ; ordinateur : Afrique face à nous
-        OFFSET = compact ? { lon: -27, lat: -30 } : { lon: 4, lat: -42 };
+        compact = true; // étiquette à droite du point, du côté visible du globe
+        OFFSET = { lon: 29, lat: -33 };
     }
 
     // projection orthographique : renvoie [x, y, profondeur] (profondeur < 0 = face cachée)
@@ -117,7 +114,7 @@
         ctx.textAlign = compact ? 'left' : 'right';
         ctx.fillStyle = big ? '#fff' : 'rgba(255,255,255,0.7)';
         ctx.fillText(p.name, lx, ly);
-        if (big && !compact) {
+        if (big) {
             ctx.font = '400 10px "JetBrains Mono", monospace';
             ctx.fillStyle = 'rgba(255,170,110,0.9)';
             ctx.fillText('14.69°N 17.44°O', lx, ly + 14);
@@ -143,7 +140,7 @@
 
     function draw(time) {
         ctx.clearRect(0, 0, size, size);
-        const sway = reduceMotion ? 0 : Math.sin(time * 0.00018) * 10;
+        const sway = reduceMotion ? 0 : Math.sin(time * 0.00018) * 6;
         const lo0 = (DAKAR.lon + OFFSET.lon + sway) * RAD;
         const la0 = (DAKAR.lat + OFFSET.lat) * RAD;
 
@@ -178,36 +175,6 @@
             ctx.fill();
         }
 
-        // arc Goma → Dakar, tracé en boucle avec une tête lumineuse
-        const cycle = reduceMotion ? 1 : (time * 0.00022) % 1.3;
-        const reach = Math.min(cycle, 1);
-        const steps = 70;
-        let prev = null;
-        ctx.lineWidth = 2;
-        for (let s = 0; s <= steps * reach; s++) {
-            const t = s / steps;
-            const p = slerp(GOMA, DAKAR, t);
-            const [x, y, d] = project(p.lat, p.lon, la0, lo0, 1 + 0.22 * Math.sin(Math.PI * t));
-            if (prev && d > -0.1) {
-                ctx.strokeStyle = `rgba(255,${(150 + 80 * t) | 0},${(90 + 120 * t) | 0},${0.35 + 0.6 * t})`;
-                ctx.beginPath();
-                ctx.moveTo(prev[0], prev[1]);
-                ctx.lineTo(x, y);
-                ctx.stroke();
-            }
-            prev = [x, y];
-        }
-        if (prev && reach < 1) {
-            const g = ctx.createRadialGradient(prev[0], prev[1], 0, prev[0], prev[1], 10);
-            g.addColorStop(0, 'rgba(255,255,255,1)');
-            g.addColorStop(1, 'rgba(255,255,255,0)');
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(prev[0], prev[1], 10, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        drawMarker(GOMA, la0, lo0, time, false);
         drawMarker(DAKAR, la0, lo0, time, true);
     }
 
