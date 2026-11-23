@@ -39,6 +39,34 @@
     let formations = [];
     let particles = [];
     let pos = 0;
+    let prev = null;                 // positions précédentes (traînées)
+    let burstAt = -1e9, lastShape = 0; // onde de choc quand une forme se termine
+    const mouse = { x: -1e4, y: -1e4 };
+    window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    window.addEventListener('mouseleave', () => { mouse.x = mouse.y = -1e4; });
+
+    // --- décor des scènes : grand numéro en fond, titre ligne par ligne, barre de progression
+    interludes.forEach((el) => {
+        const pin = el.querySelector('.interlude-pin');
+        const label = el.querySelector('.story-label');
+        const num = document.createElement('span');
+        num.className = 'interlude-num';
+        num.textContent = label ? label.textContent.trim().slice(0, 2) : '';
+        pin.prepend(num);
+
+        const title = el.querySelector('.story-title');
+        if (title) {
+            const lines = title.innerHTML.split(/<br\s*\/?>/i);
+            title.innerHTML = lines
+                .map((l, i) => `<span class="line"><span style="transition-delay:${0.08 + i * 0.09}s">${l}</span></span>`)
+                .join('');
+        }
+
+        const bar = document.createElement('div');
+        bar.className = 'interlude-progress';
+        bar.innerHTML = '<span></span>';
+        pin.appendChild(bar);
+    });
 
     const rand = (a, b) => a + Math.random() * (b - a);
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -91,6 +119,7 @@
         formations = [stars()].concat(
             interludes.map((el) => (GLYPHS[el.dataset.for] ? glyphPoints(GLYPHS[el.dataset.for]) : stars()))
         );
+        prev = new Float32Array(N * 2).fill(NaN);
         particles = Array.from({ length: N }, () => ({
             delay: Math.random(),
             arc: rand(-0.4, 0.4),
@@ -112,6 +141,7 @@
             const vis = clamp(Math.min((H - r.top) / (H * 0.5), r.bottom / (H * 0.5)), 0, 1);
             stage = Math.max(stage, vis);
             el.classList.toggle('is-active', u > 0.08 && u < 0.97);
+            el.style.setProperty('--u', u.toFixed(4));
         });
         return { target, stage };
     }
@@ -133,6 +163,37 @@
         const A = formations[from], B = formations[to];
         const left = scene.cx - scene.s, span = scene.s * 2;
 
+        // halo + onde de choc quand une forme vient de se terminer
+        const age = (time - burstAt) / 1100;
+        if (age >= 0 && age < 1 && !reduceMotion) {
+            const out = 1 - Math.pow(1 - age, 3);
+            const halo = ctx.createRadialGradient(scene.cx, scene.cy, 0, scene.cx, scene.cy, scene.s * 1.3);
+            halo.addColorStop(0, `rgba(255,190,140,${0.28 * (1 - age)})`);
+            halo.addColorStop(1, 'rgba(59,108,255,0)');
+            ctx.fillStyle = halo;
+            ctx.fillRect(scene.cx - scene.s * 1.3, scene.cy - scene.s * 1.3, scene.s * 2.6, scene.s * 2.6);
+            for (let k = 0; k < 2; k++) {
+                const a2 = clamp(age * 1.25 - k * 0.2, 0, 1);
+                if (a2 <= 0 || a2 >= 1) continue;
+                const rr = scene.s * (0.35 + 1.25 * (1 - Math.pow(1 - a2, 3)));
+                const ring = ctx.createLinearGradient(scene.cx - rr, 0, scene.cx + rr, 0);
+                ring.addColorStop(0, `rgba(255,122,47,${0.7 * (1 - a2)})`);
+                ring.addColorStop(1, `rgba(59,108,255,${0.7 * (1 - a2)})`);
+                ctx.strokeStyle = ring;
+                ctx.lineWidth = 2 - k;
+                ctx.beginPath();
+                ctx.arc(scene.cx, scene.cy, rr, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            void out;
+        }
+
+        // pivot 3D doux et flottement de la forme terminée
+        const theta = reduceMotion ? 0 : Math.sin(time * 0.00035) * 0.55;
+        const cosT = Math.cos(theta), sinT = Math.sin(theta);
+        const floatY = reduceMotion ? 0 : Math.sin(time * 0.0008) * 7;
+        const repel = mobile ? 0 : 120;
+
         ctx.globalCompositeOperation = 'lighter';
         for (let i = 0; i < N; i++) {
             const pt = particles[i];
@@ -142,8 +203,29 @@
             const bend = Math.sin(local * Math.PI) * pt.arc;
             let x = ax + dx * local - dy * bend;
             let y = ay + dy * local + dx * bend;
+
+            // la forme tourne sur elle-même (les étoiles de départ ne bougent pas)
+            const w = from === 0 ? local : 1;
+            if (w > 0) {
+                const rx = x - scene.cx;
+                const persp = 1 + (rx / scene.s) * sinT * 0.12;
+                x = scene.cx + rx * (1 + (cosT - 1) * w);
+                y = scene.cy + (y - scene.cy) * (1 + (persp - 1) * w) + floatY * w;
+            }
+
             x += Math.sin(time * 0.001 * pt.speed + pt.phase) * 1.4;
             y += Math.cos(time * 0.0012 * pt.speed + pt.phase) * 1.4;
+
+            // les particules s'écartent du pointeur
+            if (repel) {
+                const mx = x - mouse.x, my = y - mouse.y;
+                const md = Math.hypot(mx, my);
+                if (md < repel && md > 0.1) {
+                    const f = (1 - md / repel) * 34;
+                    x += (mx / md) * f;
+                    y += (my / md) * f;
+                }
+            }
 
             const colored = from === 0 ? local : 1;
             const g = clamp((x - left) / span, 0, 1);
@@ -152,8 +234,23 @@
             const b = (ORANGE[2] + (BLUE[2] - ORANGE[2]) * g) * colored + 255 * (1 - colored);
             const alpha = from === 0 && t === 0 ? 0.4 : 0.85;
 
-            ctx.fillStyle = `rgba(${r | 0},${gg | 0},${b | 0},${alpha})`;
-            ctx.fillRect(x - pt.size / 2, y - pt.size / 2, pt.size, pt.size);
+            const col = `rgba(${r | 0},${gg | 0},${b | 0},${alpha})`;
+            const px = prev[i * 2], py = prev[i * 2 + 1];
+            const moved = px === px ? Math.hypot(x - px, y - py) : 0;
+            if (moved > 2.5 && moved < 160 && !reduceMotion) {
+                // traînée façon étoile filante
+                ctx.strokeStyle = col;
+                ctx.lineWidth = pt.size * 0.9;
+                ctx.beginPath();
+                ctx.moveTo(x - (x - px) * 2.2, y - (y - py) * 2.2);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = col;
+                ctx.fillRect(x - pt.size / 2, y - pt.size / 2, pt.size, pt.size);
+            }
+            prev[i * 2] = x;
+            prev[i * 2 + 1] = y;
         }
         ctx.globalCompositeOperation = 'source-over';
     }
@@ -165,6 +262,13 @@
         const { target, stage } = measure();
         const goal = isNaN(forced) ? target : forced;
         pos += (goal - pos) * (reduceMotion || !isNaN(forced) ? 1 : 0.08);
+        const nearest = Math.round(pos);
+        if (nearest > 0 && Math.abs(pos - nearest) < 0.02 && nearest !== lastShape) {
+            burstAt = time;
+            lastShape = nearest;
+        } else if (Math.abs(pos - lastShape) > 0.6) {
+            lastShape = -1;
+        }
 
         // plein éclat pendant les scènes, très discret pendant le contenu
         const visible = (isNaN(forced) ? Math.max(0.12, stage) : 1) * (1 - storyCover());
