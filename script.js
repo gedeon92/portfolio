@@ -278,7 +278,7 @@ function showNotification(message, type = 'info') {
         position: fixed;
         top: 100px;
         right: 20px;
-        background: ${type === 'success' ? '#10b981' : '#6366f1'};
+        background: ${type === 'success' ? '#10b981' : '#ff7a2f'};
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 0.75rem;
@@ -470,7 +470,7 @@ function initPreloader() {
             width: 100%;
             height: 100%;
             border: 3px solid transparent;
-            border-top-color: #6366f1;
+            border-top-color: #ff7a2f;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -479,7 +479,7 @@ function initPreloader() {
             height: 80%;
             top: 10%;
             left: 10%;
-            border-top-color: #8b5cf6;
+            border-top-color: #ff9a3c;
             animation-duration: 0.8s;
             animation-direction: reverse;
         }
@@ -488,7 +488,7 @@ function initPreloader() {
             height: 60%;
             top: 20%;
             left: 20%;
-            border-top-color: #a855f7;
+            border-top-color: #3b6cff;
             animation-duration: 0.6s;
         }
         @keyframes spin {
@@ -695,7 +695,7 @@ function initScrollIndicators() {
         left: 0;
         width: 0%;
         height: 3px;
-        background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7);
+        background: linear-gradient(90deg, #ff7a2f, #ff9a3c);
         z-index: 10000;
         transition: width 0.3s ease;
     `;
@@ -858,7 +858,7 @@ function initPreloader() {
 // ============================================
 // CONSOLE EASTER EGG
 // ============================================
-console.log('%c👋 Bonjour !', 'font-size: 24px; font-weight: bold; color: #6366f1;');
+console.log('%c👋 Bonjour !', 'font-size: 24px; font-weight: bold; color: #ff7a2f;');
 console.log('%cVous regardez le portfolio de Gedeon Baroki', 'font-size: 14px; color: #94a3b8;');
 console.log('%cN\'hésitez pas à me contacter !', 'font-size: 14px; color: #06b6d4;');
 

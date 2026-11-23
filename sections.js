@@ -9,11 +9,11 @@
 
     // symbole (caractère Font Awesome) et palette de chaque section
     const SCENES = {
-        about:      { glyph: '', colors: ['#ff7a2f', '#ff4f8b'] }, // astronaute
-        skills:     { glyph: '', colors: ['#29d3ff', '#3b6cff'] }, // code </>
-        projects:   { glyph: '', colors: ['#ffb02e', '#ff4f4f'] }, // fusée
-        experience: { glyph: '', colors: ['#b26bff', '#3b6cff'] }, // mallette
-        education:  { glyph: '', colors: ['#2bd5a0', '#29a3ff'] }, // diplôme
+        about:      { glyph: '', colors: ['#ff7a2f', '#ffa040'] }, // astronaute
+        skills:     { glyph: '', colors: ['#3b9dff', '#3b6cff'] }, // code </>
+        projects:   { glyph: '', colors: ['#ff8a2f', '#e85d1a'] }, // fusée
+        experience: { glyph: '', colors: ['#8fa6c8', '#3b6cff'] }, // mallette
+        education:  { glyph: '', colors: ['#3fb6a8', '#3b82f6'] }, // diplôme
         contact:    { glyph: '', colors: ['#ff7a2f', '#3b6cff'] }, // antenne
     };
     const STAR_COLORS = ['#ffffff', '#ffffff'];
@@ -122,7 +122,7 @@
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
         mobile = W < 900;
-        N = mobile ? 1100 : 2600;
+        N = mobile ? 1000 : 2200;
         scene = mobile
             ? { cx: W * 0.5, cy: H * 0.34, s: Math.min(W, H) * 0.38 }
             : { cx: W * 0.68, cy: H * 0.5, s: Math.min(W * 0.5, H) * 0.46 };
@@ -137,10 +137,10 @@
             spin: rand(-1.4, 1.4),
             phase: rand(0, Math.PI * 2),
             speed: rand(0.6, 1.4),
-            size: rand(1.3, 2.9),
+            size: rand(1.1, 2.3),
             tw: rand(0.0015, 0.004),
         }));
-        warp = Array.from({ length: mobile ? 70 : 150 }, () => ({
+        warp = Array.from({ length: mobile ? 30 : 60 }, () => ({
             a: rand(0, Math.PI * 2),
             o: Math.random(),
             v: rand(0.6, 1.6),
@@ -174,8 +174,8 @@
     function drawNebula(c1, c2, strength) {
         const R = scene.s * 1.9;
         const g = ctx.createRadialGradient(scene.cx - scene.s * 0.2, scene.cy - scene.s * 0.2, 0, scene.cx, scene.cy, R);
-        g.addColorStop(0, rgba(c1, 0.22 * strength));
-        g.addColorStop(0.45, rgba(c2, 0.12 * strength));
+        g.addColorStop(0, rgba(c1, 0.07 * strength));
+        g.addColorStop(0.45, rgba(c2, 0.04 * strength));
         g.addColorStop(1, rgba(c2, 0));
         ctx.fillStyle = g;
         ctx.fillRect(scene.cx - R, scene.cy - R, R * 2, R * 2);
@@ -184,31 +184,19 @@
     function drawOrbits(time, c1, c2, strength) {
         const rings = [
             { rx: 1.35, ry: 0.42, tilt: -0.35, speed: 0.00035, col: c1 },
-            { rx: 1.15, ry: 0.3, tilt: 0.5, speed: -0.00025, col: c2 },
         ];
         rings.forEach((rg, i) => {
             const rx = scene.s * rg.rx, ry = scene.s * rg.ry;
             ctx.save();
             ctx.translate(scene.cx, scene.cy);
             ctx.rotate(rg.tilt + Math.sin(time * 0.0002 + i) * 0.08);
-            ctx.strokeStyle = rgba(rg.col, 0.28 * strength);
+            ctx.strokeStyle = rgba(rg.col, 0.14 * strength);
             ctx.lineWidth = 1;
             ctx.setLineDash([2, 6]);
             ctx.beginPath();
             ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
             ctx.stroke();
             ctx.setLineDash([]);
-            // petite lune lumineuse en orbite
-            const a = time * rg.speed * (reduceMotion ? 0 : 1) + i * 2;
-            const mx = Math.cos(a) * rx, my = Math.sin(a) * ry;
-            const g = ctx.createRadialGradient(mx, my, 0, mx, my, 14);
-            g.addColorStop(0, rgba([255, 255, 255], 0.95 * strength));
-            g.addColorStop(0.35, rgba(rg.col, 0.8 * strength));
-            g.addColorStop(1, rgba(rg.col, 0));
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(mx, my, 14, 0, Math.PI * 2);
-            ctx.fill();
             ctx.restore();
         });
     }
@@ -225,7 +213,7 @@
             const col = mix(c1, c2, (Math.sin(w.a * 3) + 1) / 2);
             const grad = ctx.createLinearGradient(scene.cx + ca * r1, scene.cy + sa * r1, scene.cx + ca * (r1 + len), scene.cy + sa * (r1 + len));
             grad.addColorStop(0, rgba(col, 0));
-            grad.addColorStop(1, rgba([255, 255, 255], 0.75 * flying * (1 - life * 0.6)));
+            grad.addColorStop(1, rgba(col, 0.28 * flying * (1 - life * 0.6)));
             ctx.strokeStyle = grad;
             ctx.lineWidth = w.w;
             ctx.beginPath();
@@ -239,20 +227,20 @@
         const age = (time - burstAt) / 1200;
         if (age < 0 || age >= 1 || reduceMotion) return;
         const halo = ctx.createRadialGradient(scene.cx, scene.cy, 0, scene.cx, scene.cy, scene.s * 1.4);
-        halo.addColorStop(0, rgba([255, 255, 255], 0.35 * (1 - age)));
-        halo.addColorStop(0.3, rgba(c1, 0.25 * (1 - age)));
+        halo.addColorStop(0, rgba(c1, 0.08 * (1 - age)));
+        halo.addColorStop(0.3, rgba(c1, 0.04 * (1 - age)));
         halo.addColorStop(1, rgba(c2, 0));
         ctx.fillStyle = halo;
         ctx.fillRect(scene.cx - scene.s * 1.4, scene.cy - scene.s * 1.4, scene.s * 2.8, scene.s * 2.8);
-        for (let k = 0; k < 3; k++) {
+        for (let k = 0; k < 1; k++) {
             const a2 = clamp(age * 1.3 - k * 0.15, 0, 1);
             if (a2 <= 0 || a2 >= 1) continue;
             const rr = scene.s * (0.3 + 1.5 * (1 - Math.pow(1 - a2, 3)));
             const ring = ctx.createLinearGradient(scene.cx - rr, 0, scene.cx + rr, 0);
-            ring.addColorStop(0, rgba(c1, 0.85 * (1 - a2)));
-            ring.addColorStop(1, rgba(c2, 0.85 * (1 - a2)));
+            ring.addColorStop(0, rgba(c1, 0.35 * (1 - a2)));
+            ring.addColorStop(1, rgba(c2, 0.35 * (1 - a2)));
             ctx.strokeStyle = ring;
-            ctx.lineWidth = 2.5 - k * 0.7;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.arc(scene.cx, scene.cy, rr, 0, Math.PI * 2);
             ctx.stroke();
@@ -333,13 +321,13 @@
             const pc = mix(c1, c2, g);
             const colored = from === 0 ? local : 1;
             const col = mix([255, 255, 255], pc, colored);
-            const alpha = from === 0 && t === 0 ? 0.4 : 0.9;
+            const alpha = from === 0 && t === 0 ? 0.35 : 0.75;
 
             const px = prev[i * 2], py = prev[i * 2 + 1];
             const moved = px === px ? Math.hypot(x - px, y - py) : 0;
             if (moved > 2.5 && moved < 180 && !reduceMotion) {
                 ctx.strokeStyle = rgba(col, alpha);
-                ctx.lineWidth = pt.size * 0.9;
+                ctx.lineWidth = pt.size * 0.7;
                 ctx.beginPath();
                 ctx.moveTo(x - (x - px) * 2.4, y - (y - py) * 2.4);
                 ctx.lineTo(x, y);
@@ -347,20 +335,6 @@
             } else {
                 ctx.fillStyle = rgba(col, alpha);
                 ctx.fillRect(x - pt.size / 2, y - pt.size / 2, pt.size, pt.size);
-            }
-
-            // halo doux (une particule sur quatre) et scintillements
-            if (i % 4 === 0 && colored > 0.5) {
-                ctx.fillStyle = rgba(pc, 0.07);
-                ctx.beginPath();
-                ctx.arc(x, y, pt.size * 4, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            if (!reduceMotion && Math.sin(time * pt.tw + pt.phase * 7) > 0.985) {
-                ctx.fillStyle = 'rgba(255,255,255,0.95)';
-                ctx.beginPath();
-                ctx.arc(x, y, pt.size * 1.4, 0, Math.PI * 2);
-                ctx.fill();
             }
 
             prev[i * 2] = x;

@@ -2922,10 +2922,10 @@ section {
     --primary: #3b6cff;
     --primary-dark: #2a55e0;
     --primary-light: #8aa8ff;
-    --primary-gradient: linear-gradient(90deg, #ff7a2f 0%, #c2557a 45%, #3b6cff 100%);
+    --primary-gradient: linear-gradient(90deg, #ff7a2f 0%, #ff9a3c 100%);
     --secondary: #ff7a2f;
     --secondary-dark: #e5631c;
-    --secondary-light: #ffb27f;
+    --secondary-light: #ffa860;
     --accent: #ff7a2f;
     --accent-light: #ff9a5c;
 
@@ -3958,7 +3958,7 @@ body::before {
     background:
         radial-gradient(38vmax 30vmax at 15% 20%, rgba(255, 122, 47, 0.10), transparent 70%),
         radial-gradient(42vmax 34vmax at 85% 70%, rgba(59, 108, 255, 0.12), transparent 70%),
-        radial-gradient(30vmax 24vmax at 60% 10%, rgba(194, 85, 122, 0.07), transparent 70%);
+        radial-gradient(30vmax 24vmax at 60% 10%, rgba(59, 108, 255, 0.04), transparent 70%);
     filter: blur(20px);
     animation: auroraDrift 26s ease-in-out infinite alternate;
 }
@@ -4191,7 +4191,7 @@ html {
 }
 
 .marquee-solid span {
-    background: linear-gradient(90deg, #ffffff, #ffd3b8 40%, #b9c8ff 80%, #ffffff);
+    background: linear-gradient(90deg, #ffffff, #cfd8e6 50%, #ffffff);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -4640,4 +4640,98 @@ html {
 
 .interlude .story-text {
     font-size: 1.1rem;
+}
+
+/* =====================================================================
+   VERSION SOBRE : moins de brillance, plus de caractère
+   ===================================================================== */
+.section-title,
+.logo-text {
+    background: none;
+    -webkit-text-fill-color: #fff;
+    color: #fff;
+    animation: none;
+}
+
+.section-header::after {
+    box-shadow: none;
+}
+
+body::before {
+    opacity: 0.6;
+}
+
+.interlude .story-label {
+    text-shadow: none;
+}
+
+.interlude .story-title .line > span {
+    background: linear-gradient(95deg, #ffffff 0%, #ffffff 62%, var(--c1, #ff7a2f) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.interlude-progress span {
+    box-shadow: none;
+}
+
+.interlude-num {
+    opacity: 0.12;
+}
+
+/* cartes : contour lumineux plus discret */
+.project-card::before,
+.skill-category::before,
+.timeline-content::before,
+.education-card::before,
+.interest-card::before,
+.contact-item::before,
+.about-quote::before,
+.stat-item::before,
+.contact-form-container::before {
+    background: radial-gradient(320px circle at var(--mx, -999px) var(--my, -999px), rgba(255, 122, 47, 0.55), rgba(255, 255, 255, 0.12) 45%, transparent 70%);
+}
+
+.project-card:hover,
+.skill-category:hover,
+.timeline-content:hover,
+.education-card:hover,
+.interest-card:hover {
+    box-shadow: 0 20px 50px -25px rgba(0, 0, 0, 0.9);
+}
+
+/* étiquettes, icônes, boutons : sans halo */
+.tech-tag:hover,
+.module-tag:hover,
+.timeline-tags span:hover,
+.skill-item:hover {
+    box-shadow: none;
+    border-color: rgba(255, 122, 47, 0.8);
+}
+
+.interest-icon,
+.category-icon,
+.education-icon,
+.contact-icon {
+    box-shadow: none !important;
+}
+
+.marquee i {
+    text-shadow: none;
+}
+
+.social-btn:hover,
+.footer-xl .footer-socials a:hover,
+.footer-mail:hover {
+    box-shadow: none;
+}
+
+.timeline-marker {
+    box-shadow: none;
+}
+
+.flight-trail,
+.footer-brand-icon {
+    box-shadow: none;
 }
