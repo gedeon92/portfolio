@@ -11,3 +11,6 @@ https://gedeon92.github.io/portfolio/
 - Gestion Pharmaceutique
 - Data Analyst
 - Timo Beach
+- Evanysca
+- PILOT
+- RADARTYM
