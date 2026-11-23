@@ -21,7 +21,7 @@
 
     // décalage du centre du globe par rapport à Dakar :
     // Dakar apparaît en haut à gauche du globe, au-dessus de la photo.
-    let OFFSET = { lon: 30, lat: -34 };
+    let OFFSET = { lon: 4, lat: -30 };
 
     let size = 0, DPR = 1, R = 0, C = 0;
     let visible = true;
@@ -42,7 +42,8 @@
         C = size / 2;
         R = C * 0.985;
         compact = window.innerWidth <= 768;
-        OFFSET = window.innerWidth <= 768 ? { lon: 35, lat: -12 } : { lon: 30, lat: -34 };
+        // mobile : Dakar à droite de la photo ; ordinateur : Afrique face à nous
+        OFFSET = compact ? { lon: -27, lat: -30 } : { lon: 4, lat: -42 };
     }
 
     // projection orthographique : renvoie [x, y, profondeur] (profondeur < 0 = face cachée)
@@ -69,7 +70,11 @@
 
     function color(x, a) {
         const g = Math.min(Math.max(x / size, 0), 1);
-        const r = 255 + (59 - 255) * g, gg = 122 + (108 - 122) * g, b = 47 + (255 - 47) * g;
+        // dégradé orange → bleu, éclairci vers le blanc pour bien lire les continents
+        const L = 0.45;
+        const r = (255 + (110 - 255) * g) * (1 - L) + 255 * L;
+        const gg = (150 + (150 - 150) * g) * (1 - L) + 255 * L;
+        const b = (80 + (255 - 80) * g) * (1 - L) + 255 * L;
         return `rgba(${r | 0},${gg | 0},${b | 0},${a})`;
     }
 
@@ -119,19 +124,58 @@
         }
     }
 
+    // trace une ligne du globe (seulement la face visible)
+    function drawLine(fn, la0, lo0) {
+        ctx.beginPath();
+        let pen = false;
+        for (let s = 0; s <= 90; s++) {
+            const [la, lo] = fn(s / 90);
+            const [x, y, d] = project(la, lo, la0, lo0);
+            if (d > 0) {
+                if (pen) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+                pen = true;
+            } else {
+                pen = false;
+            }
+        }
+        ctx.stroke();
+    }
+
     function draw(time) {
         ctx.clearRect(0, 0, size, size);
-        const sway = reduceMotion ? 0 : Math.sin(time * 0.00018) * 7;
+        const sway = reduceMotion ? 0 : Math.sin(time * 0.00018) * 10;
         const lo0 = (DAKAR.lon + OFFSET.lon + sway) * RAD;
         const la0 = (DAKAR.lat + OFFSET.lat) * RAD;
 
+        // océan : sphère bleu nuit éclairée en haut à gauche
+        const sea = ctx.createRadialGradient(C - R * 0.35, C - R * 0.4, R * 0.05, C, C, R);
+        sea.addColorStop(0, '#16224a');
+        sea.addColorStop(0.55, '#0a1230');
+        sea.addColorStop(1, '#03050d');
+        ctx.fillStyle = sea;
+        ctx.beginPath();
+        ctx.arc(C, C, R, 0, Math.PI * 2);
+        ctx.fill();
+
+        // quadrillage latitude / longitude
+        ctx.lineWidth = 0.6;
+        ctx.strokeStyle = 'rgba(140,170,255,0.13)';
+        for (let g = -60; g <= 60; g += 30) {
+            drawLine((t) => [g * RAD, (-180 + 360 * t) * RAD], la0, lo0);
+        }
+        for (let g = -180; g < 180; g += 30) {
+            drawLine((t) => [(-90 + 180 * t) * RAD, g * RAD], la0, lo0);
+        }
+
         // continents en points
-        const dot = Math.max(1.2, size / 520);
+        const dot = Math.max(1.6, size / 300);
         for (let i = 0; i < lat.length; i++) {
             const [x, y, d] = project(lat[i], lon[i], la0, lo0);
             if (d <= 0) continue;
-            ctx.fillStyle = color(x, 0.15 + 0.75 * d);
-            ctx.fillRect(x - dot / 2, y - dot / 2, dot, dot);
+            ctx.fillStyle = color(x, 0.5 + 0.5 * d);
+            ctx.beginPath();
+            ctx.arc(x, y, (dot / 2) * (0.6 + 0.4 * d), 0, Math.PI * 2);
+            ctx.fill();
         }
 
         // arc Goma → Dakar, tracé en boucle avec une tête lumineuse

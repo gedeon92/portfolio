@@ -3764,3 +3764,57 @@ section,
         bottom: 1.5rem;
     }
 }
+
+/* --- La Terre, juste derrière la photo (décalée en haut à droite) --- */
+.image-container {
+    position: relative;
+}
+
+.image-container .hero-earth {
+    position: absolute;
+    width: 135%;
+    aspect-ratio: 1;
+    left: 22%;
+    top: -42%;
+    right: auto;
+    opacity: 1;
+    z-index: 0;
+    border-radius: 50%;
+    transform: translateY(calc(var(--hp, 0) * -60px)) scale(calc(1 + var(--hp, 0) * 0.15));
+    box-shadow:
+        -14px -20px 60px -12px rgba(255, 122, 47, 0.75),
+        -10px 40px 110px -10px rgba(47, 100, 255, 0.85),
+        0 0 160px 20px rgba(47, 100, 255, 0.2);
+    animation: none;
+}
+
+.image-container .image-frame,
+.image-container .floating-card {
+    position: relative;
+    z-index: 1;
+}
+
+.image-container .floating-card {
+    position: absolute;
+    z-index: 2;
+}
+
+@media (max-width: 768px) {
+    .image-container .hero-earth {
+        width: 125%;
+        left: 18%;
+        top: -30%;
+        transform: none;
+    }
+}
+
+.image-container .hero-earth {
+    top: -34%;
+}
+
+@media (max-width: 768px) {
+    .image-container .hero-earth {
+        top: -14%;
+        left: 30%;
+    }
+}
