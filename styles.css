@@ -3906,3 +3906,249 @@ section,
     line-height: 1.85;
     color: var(--text-secondary);
 }
+
+/* =====================================================================
+   STYLE GLOBAL — FINITIONS
+   ===================================================================== */
+
+/* --- En-tête : globe et photo plus grands --- */
+.hero-content {
+    grid-template-columns: 1fr 1.08fr;
+}
+
+.image-container {
+    width: min(640px, 48vw);
+    height: min(640px, 48vw);
+}
+
+.image-container .image-frame {
+    width: 60%;
+    height: 60%;
+}
+
+.image-container .floating-card {
+    font-size: 0.8rem;
+}
+
+@media (max-width: 1024px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+    }
+
+    .image-container {
+        width: min(520px, 80vw);
+        height: min(520px, 80vw);
+    }
+}
+
+@media (max-width: 768px) {
+    .image-container {
+        width: min(440px, 94vw);
+        height: min(440px, 94vw);
+    }
+}
+
+/* --- Aurores en fond --- */
+body::before {
+    content: '';
+    position: fixed;
+    inset: -20vmax;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(38vmax 30vmax at 15% 20%, rgba(255, 122, 47, 0.10), transparent 70%),
+        radial-gradient(42vmax 34vmax at 85% 70%, rgba(59, 108, 255, 0.12), transparent 70%),
+        radial-gradient(30vmax 24vmax at 60% 10%, rgba(194, 85, 122, 0.07), transparent 70%);
+    filter: blur(20px);
+    animation: auroraDrift 26s ease-in-out infinite alternate;
+}
+
+@keyframes auroraDrift {
+    0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
+    50%  { transform: translate3d(4vmax, -3vmax, 0) rotate(6deg); }
+    100% { transform: translate3d(-3vmax, 2vmax, 0) rotate(-4deg); }
+}
+
+/* --- Grain de film très léger --- */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --- Cartes : lumière qui suit la souris + contour lumineux --- */
+.project-card,
+.skill-category,
+.timeline-content,
+.education-card,
+.interest-card,
+.contact-item,
+.about-quote,
+.stat-item,
+.contact-form-container {
+    position: relative;
+    isolation: isolate;
+    background:
+        radial-gradient(520px circle at var(--mx, -999px) var(--my, -999px), rgba(255, 140, 80, 0.07), transparent 45%),
+        linear-gradient(180deg, rgba(22, 22, 28, 0.9), rgba(10, 10, 13, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 24px 60px -30px rgba(0, 0, 0, 0.8);
+}
+
+.project-card::before,
+.skill-category::before,
+.timeline-content::before,
+.education-card::before,
+.interest-card::before,
+.contact-item::before,
+.about-quote::before,
+.stat-item::before,
+.contact-form-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(360px circle at var(--mx, -999px) var(--my, -999px), rgba(255, 122, 47, 0.9), rgba(59, 108, 255, 0.6) 40%, transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.project-card:hover::before,
+.skill-category:hover::before,
+.timeline-content:hover::before,
+.education-card:hover::before,
+.interest-card:hover::before,
+.contact-item:hover::before,
+.about-quote:hover::before,
+.stat-item:hover::before,
+.contact-form-container:hover::before {
+    opacity: 1;
+}
+
+/* images de projets : léger zoom et dégradé au survol */
+.project-card .project-image img {
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s ease;
+}
+
+.project-card:hover .project-image img {
+    transform: scale(1.05);
+    filter: saturate(1.1);
+}
+
+/* --- Titres de section : reflet lumineux --- */
+.section-title {
+    background: linear-gradient(100deg, #ffffff 0%, #ffffff 40%, #ffd2b8 48%, #b9c8ff 54%, #ffffff 62%, #ffffff 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleSheen 6s ease-in-out infinite;
+}
+
+@keyframes titleSheen {
+    0%, 20%  { background-position: 100% 0; }
+    60%, 100% { background-position: 0% 0; }
+}
+
+.section-header::after {
+    width: 90px;
+    height: 2px;
+    background: var(--primary-gradient);
+    box-shadow: 0 0 14px rgba(255, 122, 47, 0.6);
+}
+
+/* --- Étiquettes --- */
+.tech-tag,
+.module-tag,
+.timeline-tags span,
+.skill-item {
+    transition: border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.tech-tag:hover,
+.module-tag:hover,
+.timeline-tags span:hover,
+.skill-item:hover {
+    border-color: rgba(255, 122, 47, 0.7);
+    color: #fff;
+    box-shadow: 0 0 18px -4px rgba(255, 122, 47, 0.6);
+    transform: translateY(-2px);
+}
+
+/* --- Menu : lien actif en pilule --- */
+.nav-link {
+    padding: 0.45rem 0.85rem;
+    border-radius: 9999px;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.nav-link::after {
+    display: none;
+}
+
+.logo-text {
+    background: linear-gradient(90deg, #fff 30%, #ffb27f 50%, #9db4ff 70%, #fff 90%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: titleSheen 8s ease-in-out infinite;
+}
+
+/* --- Icônes rondes (centres d'intérêt, catégories) : halo --- */
+.interest-icon,
+.category-icon,
+.education-icon {
+    box-shadow: 0 10px 30px -10px rgba(255, 122, 47, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+/* --- Barre de défilement --- */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ff7a2f, #3b6cff);
+    border: 3px solid #000;
+    border-radius: 10px;
+}
+
+html {
+    scrollbar-color: #ff7a2f #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::before,
+    .section-title,
+    .logo-text {
+        animation: none;
+    }
+}
+
+.image-container .card-2 {
+    left: 2%;
+    bottom: 24%;
+}
