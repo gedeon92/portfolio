@@ -4610,3 +4610,34 @@ html {
 .footer-cta-title {
     font-size: clamp(2rem, 5.6vw, 5.2rem);
 }
+
+/* --- Scènes de transition : couleurs propres à chaque section --- */
+.interlude .story-label {
+    color: var(--c1, var(--accent));
+    text-shadow: 0 0 18px var(--c1, transparent);
+}
+
+.interlude .story-title {
+    font-size: clamp(2.1rem, 3.9vw, 3.7rem);
+}
+
+.interlude .story-title .line > span {
+    background: linear-gradient(95deg, #ffffff 0%, #ffffff 35%, var(--c1, #ff7a2f) 70%, var(--c2, #3b6cff) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.interlude-num {
+    -webkit-text-stroke: 1px var(--c1, rgba(255, 255, 255, 0.1));
+    opacity: 0.22;
+}
+
+.interlude-progress span {
+    background: linear-gradient(90deg, var(--c1, #ff7a2f), var(--c2, #3b6cff));
+    box-shadow: 0 0 12px var(--c1, transparent);
+}
+
+.interlude .story-text {
+    font-size: 1.1rem;
+}

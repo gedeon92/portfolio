@@ -1,21 +1,22 @@
 /* =====================================================================
    Transitions entre sections en particules.
    Avant chaque section, une scène plein écran (.interlude) se fige au
-   défilement : les particules s'envolent et forment le symbole de la
-   section suivante — même principe que « Le voyage de la donnée ».
+   défilement : les particules tourbillonnent et forment le symbole de la
+   section suivante, avec nébuleuse, anneaux en orbite et effet hyperespace.
    ===================================================================== */
 (function () {
     'use strict';
 
-    // symbole de chaque section (caractères Font Awesome)
-    const GLYPHS = {
-        about: '',      // astronaute
-        skills: '',     // code </>
-        projects: '',   // fusée
-        experience: '', // mallette
-        education: '',  // chapeau de diplômé
-        contact: '',    // antenne satellite
+    // symbole (caractère Font Awesome) et palette de chaque section
+    const SCENES = {
+        about:      { glyph: '', colors: ['#ff7a2f', '#ff4f8b'] }, // astronaute
+        skills:     { glyph: '', colors: ['#29d3ff', '#3b6cff'] }, // code </>
+        projects:   { glyph: '', colors: ['#ffb02e', '#ff4f4f'] }, // fusée
+        experience: { glyph: '', colors: ['#b26bff', '#3b6cff'] }, // mallette
+        education:  { glyph: '', colors: ['#2bd5a0', '#29a3ff'] }, // diplôme
+        contact:    { glyph: '', colors: ['#ff7a2f', '#3b6cff'] }, // antenne
     };
+    const STAR_COLORS = ['#ffffff', '#ffffff'];
 
     const interludes = Array.from(document.querySelectorAll('.interlude'));
     if (!interludes.length) return;
@@ -29,26 +30,40 @@
     document.body.prepend(canvas);
     const ctx = canvas.getContext('2d');
 
-    const ORANGE = [255, 122, 47];
-    const BLUE = [59, 108, 255];
     const FONT = '"Font Awesome 6 Free"';
-    const MORPH_END = 0.55; // la forme est complète à 55 % de la scène
+    const MORPH_END = 0.55;
+
+    const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+    const palettes = [STAR_COLORS.map(hex)].concat(
+        interludes.map((el) => (SCENES[el.dataset.for] || SCENES.contact).colors.map(hex))
+    );
 
     let W = 0, H = 0, DPR = 1, N = 0, mobile = false;
     let scene = { cx: 0, cy: 0, s: 0 };
     let formations = [];
     let particles = [];
+    let warp = [];
     let pos = 0;
-    let prev = null;                 // positions précédentes (traînées)
-    let burstAt = -1e9, lastShape = 0; // onde de choc quand une forme se termine
+    let prev = null;
+    let burstAt = -1e9, lastShape = 0;
     const mouse = { x: -1e4, y: -1e4 };
     window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
     window.addEventListener('mouseleave', () => { mouse.x = mouse.y = -1e4; });
 
-    // --- décor des scènes : grand numéro en fond, titre ligne par ligne, barre de progression
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const mix = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+    const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+
+    // ---------- Décor des scènes (numéro géant, titre ligne par ligne, barre) ----------
     interludes.forEach((el) => {
         const pin = el.querySelector('.interlude-pin');
         const label = el.querySelector('.story-label');
+        const sc = SCENES[el.dataset.for] || SCENES.contact;
+        el.style.setProperty('--c1', sc.colors[0]);
+        el.style.setProperty('--c2', sc.colors[1]);
+
         const num = document.createElement('span');
         num.className = 'interlude-num';
         num.textContent = label ? label.textContent.trim().slice(0, 2) : '';
@@ -67,10 +82,6 @@
         bar.innerHTML = '<span></span>';
         pin.appendChild(bar);
     });
-
-    const rand = (a, b) => a + Math.random() * (b - a);
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
     // ---------- Formes ----------
     function stars() {
@@ -111,21 +122,29 @@
         ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
         mobile = W < 900;
-        N = mobile ? 1000 : 2200;
+        N = mobile ? 1100 : 2600;
         scene = mobile
-            ? { cx: W * 0.5, cy: H * 0.34, s: Math.min(W, H) * 0.34 }
-            : { cx: W * 0.68, cy: H * 0.5, s: Math.min(W * 0.5, H) * 0.4 };
+            ? { cx: W * 0.5, cy: H * 0.34, s: Math.min(W, H) * 0.38 }
+            : { cx: W * 0.68, cy: H * 0.5, s: Math.min(W * 0.5, H) * 0.46 };
 
         formations = [stars()].concat(
-            interludes.map((el) => (GLYPHS[el.dataset.for] ? glyphPoints(GLYPHS[el.dataset.for]) : stars()))
+            interludes.map((el) => glyphPoints((SCENES[el.dataset.for] || SCENES.contact).glyph))
         );
         prev = new Float32Array(N * 2).fill(NaN);
         particles = Array.from({ length: N }, () => ({
             delay: Math.random(),
             arc: rand(-0.4, 0.4),
+            spin: rand(-1.4, 1.4),
             phase: rand(0, Math.PI * 2),
             speed: rand(0.6, 1.4),
-            size: rand(1.1, 2.4),
+            size: rand(1.3, 2.9),
+            tw: rand(0.0015, 0.004),
+        }));
+        warp = Array.from({ length: mobile ? 70 : 150 }, () => ({
+            a: rand(0, Math.PI * 2),
+            o: Math.random(),
+            v: rand(0.6, 1.6),
+            w: rand(0.6, 1.8),
         }));
     }
 
@@ -137,7 +156,6 @@
             const run = el.offsetHeight - H;
             const u = clamp(-r.top / run, 0, 1);
             target += clamp(u / MORPH_END, 0, 1);
-            // visibilité de la scène (1 = plein écran)
             const vis = clamp(Math.min((H - r.top) / (H * 0.5), r.bottom / (H * 0.5)), 0, 1);
             stage = Math.max(stage, vis);
             el.classList.toggle('is-active', u > 0.08 && u < 0.97);
@@ -152,6 +170,95 @@
         return Math.min(clamp((H - r.top) / (H * 0.6), 0, 1), clamp(r.bottom / (H * 0.6), 0, 1));
     }
 
+    // ---------- Éléments de décor dessinés ----------
+    function drawNebula(c1, c2, strength) {
+        const R = scene.s * 1.9;
+        const g = ctx.createRadialGradient(scene.cx - scene.s * 0.2, scene.cy - scene.s * 0.2, 0, scene.cx, scene.cy, R);
+        g.addColorStop(0, rgba(c1, 0.22 * strength));
+        g.addColorStop(0.45, rgba(c2, 0.12 * strength));
+        g.addColorStop(1, rgba(c2, 0));
+        ctx.fillStyle = g;
+        ctx.fillRect(scene.cx - R, scene.cy - R, R * 2, R * 2);
+    }
+
+    function drawOrbits(time, c1, c2, strength) {
+        const rings = [
+            { rx: 1.35, ry: 0.42, tilt: -0.35, speed: 0.00035, col: c1 },
+            { rx: 1.15, ry: 0.3, tilt: 0.5, speed: -0.00025, col: c2 },
+        ];
+        rings.forEach((rg, i) => {
+            const rx = scene.s * rg.rx, ry = scene.s * rg.ry;
+            ctx.save();
+            ctx.translate(scene.cx, scene.cy);
+            ctx.rotate(rg.tilt + Math.sin(time * 0.0002 + i) * 0.08);
+            ctx.strokeStyle = rgba(rg.col, 0.28 * strength);
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 6]);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // petite lune lumineuse en orbite
+            const a = time * rg.speed * (reduceMotion ? 0 : 1) + i * 2;
+            const mx = Math.cos(a) * rx, my = Math.sin(a) * ry;
+            const g = ctx.createRadialGradient(mx, my, 0, mx, my, 14);
+            g.addColorStop(0, rgba([255, 255, 255], 0.95 * strength));
+            g.addColorStop(0.35, rgba(rg.col, 0.8 * strength));
+            g.addColorStop(1, rgba(rg.col, 0));
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(mx, my, 14, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+    }
+
+    function drawWarp(time, flying, c1, c2) {
+        if (flying < 0.12 || reduceMotion) return;
+        const maxR = Math.hypot(W, H) * 0.6;
+        ctx.lineCap = 'round';
+        warp.forEach((w) => {
+            const life = (w.o + time * 0.0006 * w.v) % 1;
+            const r1 = scene.s * 0.25 + life * maxR;
+            const len = (40 + 220 * life) * flying;
+            const ca = Math.cos(w.a), sa = Math.sin(w.a);
+            const col = mix(c1, c2, (Math.sin(w.a * 3) + 1) / 2);
+            const grad = ctx.createLinearGradient(scene.cx + ca * r1, scene.cy + sa * r1, scene.cx + ca * (r1 + len), scene.cy + sa * (r1 + len));
+            grad.addColorStop(0, rgba(col, 0));
+            grad.addColorStop(1, rgba([255, 255, 255], 0.75 * flying * (1 - life * 0.6)));
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = w.w;
+            ctx.beginPath();
+            ctx.moveTo(scene.cx + ca * r1, scene.cy + sa * r1);
+            ctx.lineTo(scene.cx + ca * (r1 + len), scene.cy + sa * (r1 + len));
+            ctx.stroke();
+        });
+    }
+
+    function drawBurst(time, c1, c2) {
+        const age = (time - burstAt) / 1200;
+        if (age < 0 || age >= 1 || reduceMotion) return;
+        const halo = ctx.createRadialGradient(scene.cx, scene.cy, 0, scene.cx, scene.cy, scene.s * 1.4);
+        halo.addColorStop(0, rgba([255, 255, 255], 0.35 * (1 - age)));
+        halo.addColorStop(0.3, rgba(c1, 0.25 * (1 - age)));
+        halo.addColorStop(1, rgba(c2, 0));
+        ctx.fillStyle = halo;
+        ctx.fillRect(scene.cx - scene.s * 1.4, scene.cy - scene.s * 1.4, scene.s * 2.8, scene.s * 2.8);
+        for (let k = 0; k < 3; k++) {
+            const a2 = clamp(age * 1.3 - k * 0.15, 0, 1);
+            if (a2 <= 0 || a2 >= 1) continue;
+            const rr = scene.s * (0.3 + 1.5 * (1 - Math.pow(1 - a2, 3)));
+            const ring = ctx.createLinearGradient(scene.cx - rr, 0, scene.cx + rr, 0);
+            ring.addColorStop(0, rgba(c1, 0.85 * (1 - a2)));
+            ring.addColorStop(1, rgba(c2, 0.85 * (1 - a2)));
+            ctx.strokeStyle = ring;
+            ctx.lineWidth = 2.5 - k * 0.7;
+            ctx.beginPath();
+            ctx.arc(scene.cx, scene.cy, rr, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+    }
+
     // ---------- Rendu ----------
     function draw(time) {
         ctx.clearRect(0, 0, W, H);
@@ -161,40 +268,26 @@
         const to = Math.min(from + 1, last);
         const t = pos - from;
         const A = formations[from], B = formations[to];
-        const left = scene.cx - scene.s, span = scene.s * 2;
+        const flying = Math.sin(clamp(t, 0, 1) * Math.PI);
 
-        // halo + onde de choc quand une forme vient de se terminer
-        const age = (time - burstAt) / 1100;
-        if (age >= 0 && age < 1 && !reduceMotion) {
-            const out = 1 - Math.pow(1 - age, 3);
-            const halo = ctx.createRadialGradient(scene.cx, scene.cy, 0, scene.cx, scene.cy, scene.s * 1.3);
-            halo.addColorStop(0, `rgba(255,190,140,${0.28 * (1 - age)})`);
-            halo.addColorStop(1, 'rgba(59,108,255,0)');
-            ctx.fillStyle = halo;
-            ctx.fillRect(scene.cx - scene.s * 1.3, scene.cy - scene.s * 1.3, scene.s * 2.6, scene.s * 2.6);
-            for (let k = 0; k < 2; k++) {
-                const a2 = clamp(age * 1.25 - k * 0.2, 0, 1);
-                if (a2 <= 0 || a2 >= 1) continue;
-                const rr = scene.s * (0.35 + 1.25 * (1 - Math.pow(1 - a2, 3)));
-                const ring = ctx.createLinearGradient(scene.cx - rr, 0, scene.cx + rr, 0);
-                ring.addColorStop(0, `rgba(255,122,47,${0.7 * (1 - a2)})`);
-                ring.addColorStop(1, `rgba(59,108,255,${0.7 * (1 - a2)})`);
-                ctx.strokeStyle = ring;
-                ctx.lineWidth = 2 - k;
-                ctx.beginPath();
-                ctx.arc(scene.cx, scene.cy, rr, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-            void out;
-        }
-
-        // pivot 3D doux et flottement de la forme terminée
-        const theta = reduceMotion ? 0 : Math.sin(time * 0.00035) * 0.55;
-        const cosT = Math.cos(theta), sinT = Math.sin(theta);
-        const floatY = reduceMotion ? 0 : Math.sin(time * 0.0008) * 7;
-        const repel = mobile ? 0 : 120;
+        // palette de la scène (mélange pendant la transition)
+        const pk = ease(clamp(t, 0, 1));
+        const c1 = mix(palettes[from][0], palettes[to][0], pk);
+        const c2 = mix(palettes[from][1], palettes[to][1], pk);
+        const formed = from === 0 ? pk : 1; // 0 = étoiles, 1 = symbole
 
         ctx.globalCompositeOperation = 'lighter';
+        drawNebula(c1, c2, formed);
+        drawWarp(time, flying, c1, c2);
+        drawOrbits(time, c1, c2, formed * (1 - flying * 0.6));
+        drawBurst(time, c1, c2);
+
+        const theta = reduceMotion ? 0 : Math.sin(time * 0.00035) * 0.55;
+        const cosT = Math.cos(theta), sinT = Math.sin(theta);
+        const floatY = reduceMotion ? 0 : Math.sin(time * 0.0008) * 8;
+        const repel = mobile ? 0 : 130;
+        const left = scene.cx - scene.s, span = scene.s * 2;
+
         for (let i = 0; i < N; i++) {
             const pt = particles[i];
             const local = reduceMotion ? (t > 0.5 ? 1 : 0) : ease(clamp(t * 1.5 - pt.delay * 0.5, 0, 1));
@@ -204,7 +297,16 @@
             let x = ax + dx * local - dy * bend;
             let y = ay + dy * local + dx * bend;
 
-            // la forme tourne sur elle-même (les étoiles de départ ne bougent pas)
+            // tourbillon autour du centre pendant le vol
+            const swirl = Math.sin(local * Math.PI) * pt.spin;
+            if (swirl && !reduceMotion) {
+                const ox = x - scene.cx, oy = y - scene.cy;
+                const cs = Math.cos(swirl), sn = Math.sin(swirl);
+                x = scene.cx + ox * cs - oy * sn;
+                y = scene.cy + ox * sn + oy * cs;
+            }
+
+            // pivot 3D doux et flottement du symbole
             const w = from === 0 ? local : 1;
             if (w > 0) {
                 const rx = x - scene.cx;
@@ -216,39 +318,51 @@
             x += Math.sin(time * 0.001 * pt.speed + pt.phase) * 1.4;
             y += Math.cos(time * 0.0012 * pt.speed + pt.phase) * 1.4;
 
-            // les particules s'écartent du pointeur
             if (repel) {
                 const mx = x - mouse.x, my = y - mouse.y;
                 const md = Math.hypot(mx, my);
                 if (md < repel && md > 0.1) {
-                    const f = (1 - md / repel) * 34;
+                    const f = (1 - md / repel) * 38;
                     x += (mx / md) * f;
                     y += (my / md) * f;
                 }
             }
 
-            const colored = from === 0 ? local : 1;
+            // couleur : blanc (étoiles) → dégradé de la palette selon la position
             const g = clamp((x - left) / span, 0, 1);
-            const r = (ORANGE[0] + (BLUE[0] - ORANGE[0]) * g) * colored + 255 * (1 - colored);
-            const gg = (ORANGE[1] + (BLUE[1] - ORANGE[1]) * g) * colored + 255 * (1 - colored);
-            const b = (ORANGE[2] + (BLUE[2] - ORANGE[2]) * g) * colored + 255 * (1 - colored);
-            const alpha = from === 0 && t === 0 ? 0.4 : 0.85;
+            const pc = mix(c1, c2, g);
+            const colored = from === 0 ? local : 1;
+            const col = mix([255, 255, 255], pc, colored);
+            const alpha = from === 0 && t === 0 ? 0.4 : 0.9;
 
-            const col = `rgba(${r | 0},${gg | 0},${b | 0},${alpha})`;
             const px = prev[i * 2], py = prev[i * 2 + 1];
             const moved = px === px ? Math.hypot(x - px, y - py) : 0;
-            if (moved > 2.5 && moved < 160 && !reduceMotion) {
-                // traînée façon étoile filante
-                ctx.strokeStyle = col;
+            if (moved > 2.5 && moved < 180 && !reduceMotion) {
+                ctx.strokeStyle = rgba(col, alpha);
                 ctx.lineWidth = pt.size * 0.9;
                 ctx.beginPath();
-                ctx.moveTo(x - (x - px) * 2.2, y - (y - py) * 2.2);
+                ctx.moveTo(x - (x - px) * 2.4, y - (y - py) * 2.4);
                 ctx.lineTo(x, y);
                 ctx.stroke();
             } else {
-                ctx.fillStyle = col;
+                ctx.fillStyle = rgba(col, alpha);
                 ctx.fillRect(x - pt.size / 2, y - pt.size / 2, pt.size, pt.size);
             }
+
+            // halo doux (une particule sur quatre) et scintillements
+            if (i % 4 === 0 && colored > 0.5) {
+                ctx.fillStyle = rgba(pc, 0.07);
+                ctx.beginPath();
+                ctx.arc(x, y, pt.size * 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            if (!reduceMotion && Math.sin(time * pt.tw + pt.phase * 7) > 0.985) {
+                ctx.fillStyle = 'rgba(255,255,255,0.95)';
+                ctx.beginPath();
+                ctx.arc(x, y, pt.size * 1.4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
             prev[i * 2] = x;
             prev[i * 2 + 1] = y;
         }
@@ -262,6 +376,7 @@
         const { target, stage } = measure();
         const goal = isNaN(forced) ? target : forced;
         pos += (goal - pos) * (reduceMotion || !isNaN(forced) ? 1 : 0.08);
+
         const nearest = Math.round(pos);
         if (nearest > 0 && Math.abs(pos - nearest) < 0.02 && nearest !== lastShape) {
             burstAt = time;
@@ -270,7 +385,6 @@
             lastShape = -1;
         }
 
-        // plein éclat pendant les scènes, très discret pendant le contenu
         const visible = (isNaN(forced) ? Math.max(0.12, stage) : 1) * (1 - storyCover());
         canvas.style.opacity = visible.toFixed(3);
         if (visible > 0.01) draw(time);
