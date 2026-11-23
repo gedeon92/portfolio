@@ -110,6 +110,45 @@
         </div>
     </section>
 
+    <!-- Story Section : animation pilotée par le défilement -->
+    <section id="story" class="story" aria-label="Mon parcours en quatre étapes">
+        <div class="story-pin">
+            <canvas id="story-canvas" aria-hidden="true"></canvas>
+
+            <div class="story-steps">
+                <div class="story-step story-intro" data-from="0" data-to="0.1">
+                    <span class="story-label">Le voyage de la donnée</span>
+                    <h2 class="story-title">De la donnée brute<br>à l'intelligence.</h2>
+                    <p class="story-text">Faites défiler pour suivre mon parcours.</p>
+                </div>
+                <div class="story-step" data-from="0.1" data-to="0.33">
+                    <span class="story-label">01 — Collecter</span>
+                    <h2 class="story-title">Tout commence<br>par la donnée.</h2>
+                    <p class="story-text">Enquêtes, terrain, bases de données : je collecte et je vérifie l'information à la source.</p>
+                </div>
+                <div class="story-step" data-from="0.33" data-to="0.58">
+                    <span class="story-label">02 — Construire</span>
+                    <h2 class="story-title">Du code<br>aux applications.</h2>
+                    <p class="story-text">Laravel, Angular, React, Flutter, Flask : je transforme les besoins en plateformes web et mobiles.</p>
+                </div>
+                <div class="story-step" data-from="0.58" data-to="0.82">
+                    <span class="story-label">03 — Analyser</span>
+                    <h2 class="story-title">Des chiffres<br>qui parlent.</h2>
+                    <p class="story-text">Power BI, Pandas, tableaux de bord : je rends les données lisibles pour décider vite.</p>
+                </div>
+                <div class="story-step" data-from="0.82" data-to="1.01">
+                    <span class="story-label">04 — Innover</span>
+                    <h2 class="story-title">L'IA au service<br>des projets.</h2>
+                    <p class="story-text">Big Data &amp; Data Stratégie : je conçois des systèmes intelligents, faits pour durer.</p>
+                </div>
+            </div>
+
+            <div class="story-progress" aria-hidden="true">
+                <div class="story-progress-fill"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
@@ -1089,6 +1128,8 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
     <script src="script.js"></script>
+    <script src="story.js"></script>
 </body>
 </html>
