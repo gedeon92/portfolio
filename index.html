@@ -269,6 +269,10 @@
         </div>
     </section>
 
+    <div class="marquee marquee-solid" aria-hidden="true">
+        <div class="marquee-track"><span>Laravel</span><i>✦</i><span>React</span><i>✦</i><span>Angular</span><i>✦</i><span>Flutter</span><i>✦</i><span>Python</span><i>✦</i><span>Flask</span><i>✦</i><span>Next.js</span><i>✦</i><span>Power BI</span><i>✦</i><span>Pandas</span><i>✦</i><span>MySQL</span><i>✦</i><span>Machine Learning</span><i>✦</i><span>IA</span><i>✦</i><span>Laravel</span><i>✦</i><span>React</span><i>✦</i><span>Angular</span><i>✦</i><span>Flutter</span><i>✦</i><span>Python</span><i>✦</i><span>Flask</span><i>✦</i><span>Next.js</span><i>✦</i><span>Power BI</span><i>✦</i><span>Pandas</span><i>✦</i><span>MySQL</span><i>✦</i><span>Machine Learning</span><i>✦</i><span>IA</span><i>✦</i></div>
+    </div>
+
     <!-- Transition vers « Compétences » -->
     <section class="interlude" data-for="skills" aria-hidden="true">
         <div class="interlude-pin">
@@ -1161,32 +1165,68 @@
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <div class="marquee marquee-outline" aria-hidden="true">
+        <div class="marquee-track"><span>Développement web</span><i>✦</i><span>Data Strategy</span><i>✦</i><span>Big Data</span><i>✦</i><span>Tableaux de bord</span><i>✦</i><span>Intelligence artificielle</span><i>✦</i><span>Mobile</span><i>✦</i><span>Dakar</span><i>✦</i><span>Développement web</span><i>✦</i><span>Data Strategy</span><i>✦</i><span>Big Data</span><i>✦</i><span>Tableaux de bord</span><i>✦</i><span>Intelligence artificielle</span><i>✦</i><span>Mobile</span><i>✦</i><span>Dakar</span><i>✦</i></div>
+    </div>
+
+    <footer class="footer footer-xl">
+        <div class="footer-horizon" aria-hidden="true"></div>
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <span class="footer-logo">GB</span>
-                    <p class="footer-tagline">DevArchitect & Data Strategist</p>
+            <div class="footer-cta">
+                <span class="footer-status"><span class="status-dot"></span> Disponible pour de nouveaux projets</span>
+                <h2 class="footer-cta-title">Une idée ?<br><span>Construisons-la.</span></h2>
+                <a href="mailto:gedbaroki@gmail.com" class="footer-mail">
+                    gedbaroki@gmail.com
+                    <span class="footer-mail-arrow"><i class="fas fa-arrow-right"></i></span>
+                </a>
+            </div>
+
+            <div class="footer-grid">
+                <div class="footer-col footer-brand">
+                    <div class="footer-brand-row">
+                        <img src="icons/icon-512.png" alt="" class="footer-brand-icon" width="44" height="44">
+                        <div>
+                            <span class="footer-logo">Gedeon Baroki</span>
+                            <p class="footer-tagline">DevArchitect &amp; Data Strategist</p>
+                        </div>
+                    </div>
+                    <div class="footer-clock">
+                        <span class="footer-clock-label">Dakar, Sénégal</span>
+                        <span class="footer-clock-time" id="dakar-time">--:--:--</span>
+                    </div>
                 </div>
-                <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Navigation</h4>
                     <a href="#home">Accueil</a>
                     <a href="#about">À propos</a>
                     <a href="#skills">Compétences</a>
                     <a href="#projects">Projets</a>
+                    <a href="#experience">Expériences</a>
+                    <a href="#education">Formation</a>
                     <a href="#contact">Contact</a>
                 </div>
-                <div class="footer-socials">
-                    <a href="https://www.linkedin.com/in/gedeon-baroki-63a558345/" target="_blank" aria-label="LinkedIn">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="mailto:gedbaroki@gmail.com" aria-label="Email">
-                        <i class="fas fa-envelope"></i>
-                    </a>
+                <div class="footer-col">
+                    <h4>Contact</h4>
+                    <a href="tel:+221772757469">+221 77 275 74 69</a>
+                    <a href="mailto:gedbaroki@gmail.com">gedbaroki@gmail.com</a>
+                    <span>Ouakam, Dakar, Sénégal</span>
+                </div>
+                <div class="footer-col">
+                    <h4>Réseaux</h4>
+                    <div class="footer-socials">
+                        <a href="https://www.linkedin.com/in/gedeon-baroki-63a558345/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://github.com/gedeon92" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="mailto:gedbaroki@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                    </div>
                 </div>
             </div>
+
+            <div class="footer-wordmark" aria-hidden="true">GEDEON BAROKI</div>
+
             <div class="footer-bottom">
-                <p>&copy; 2025 Gedeon Baroki. Tous droits réservés.</p>
-                <p class="footer-credit">Fait avec <i class="fas fa-heart"></i> et beaucoup de <i class="fas fa-coffee"></i></p>
+                <p>&copy; <span id="footer-year">2026</span> Gedeon Baroki — Tous droits réservés.</p>
+                <p class="footer-credit">Conçu et développé à Dakar <i class="fas fa-location-dot"></i></p>
+                <a href="#home" class="footer-top">Retour en haut <i class="fas fa-arrow-up"></i></a>
             </div>
         </div>
     </footer>
